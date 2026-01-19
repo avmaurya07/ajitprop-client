@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import ImageUploader from "../components/ImageUploader";
@@ -35,11 +35,7 @@ function EditProperty() {
     phone: "",
   });
 
-  useEffect(() => {
-    fetchProperty();
-  }, [id]);
-
-  const fetchProperty = async () => {
+  const fetchProperty = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/api/properties/${id}`,
@@ -71,7 +67,11 @@ function EditProperty() {
     } finally {
       setFetchLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchProperty();
+  }, [fetchProperty]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -10,9 +10,23 @@ function PropertyDetail() {
   const [error, setError] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [mediaItems, setMediaItems] = useState([]);
+
+  const fetchProperty = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/properties/${id}`,
+      );
+      setProperty(response.data);
+    } catch (err) {
+      setError("Failed to load property details");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
   useEffect(() => {
     fetchProperty();
-  }, [id]);
+  }, [fetchProperty]);
 
   useEffect(() => {
     if (property) {
@@ -33,19 +47,6 @@ function PropertyDetail() {
       setMediaItems(items);
     }
   }, [property]);
-
-  const fetchProperty = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/properties/${id}`,
-      );
-      setProperty(response.data);
-    } catch (err) {
-      setError("Failed to load property details");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this property?")) {
