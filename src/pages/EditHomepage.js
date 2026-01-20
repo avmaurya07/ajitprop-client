@@ -11,6 +11,7 @@ import HomeVideoModal from "../components/HomeVideoModal";
 import FooterModal from "../components/FooterModal";
 
 function EditHomepage() {
+  // eslint-disable-next-line no-unused-vars
   const [, setRefreshKey] = useState(0);
 
   // Modal states
