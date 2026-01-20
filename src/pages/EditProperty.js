@@ -17,7 +17,6 @@ function EditProperty() {
     // slug removed, auto-generated
     name: "",
     price: "",
-    pricePeriod: "total",
     location: "",
     type: "apartment",
     status: "available",
@@ -31,8 +30,6 @@ function EditProperty() {
     videos: "",
     featured: false,
     available: true,
-    email: "",
-    phone: "",
   });
 
   const fetchProperty = useCallback(async () => {
@@ -45,7 +42,6 @@ function EditProperty() {
         // slug removed, auto-generated
         name: property.name || "",
         price: property.price || "",
-        pricePeriod: property.pricePeriod || "total",
         location: property.location || "",
         type: property.type || "apartment",
         status: property.status || "available",
@@ -59,8 +55,6 @@ function EditProperty() {
         videos: property.videos ? property.videos.join(", ") : "",
         featured: property.featured || false,
         available: property.available !== undefined ? property.available : true,
-        email: property.email || "",
-        phone: property.phone || "",
       });
     } catch (err) {
       setError("Failed to load property details");
@@ -99,8 +93,7 @@ function EditProperty() {
         `${process.env.REACT_APP_API_URL}/api/properties/${id}`,
         {
           ...formData,
-          price: Number(formData.price),
-          pricePeriod: formData.pricePeriod,
+          price: formData.price === "" ? 0 : Number(formData.price),
           bedrooms: Number(formData.bedrooms),
           bathrooms: Number(formData.bathrooms),
           area: Number(formData.area),
@@ -178,25 +171,6 @@ function EditProperty() {
 
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">
-                Price Period <span className="text-red-600">*</span>
-              </label>
-              <select
-                name="pricePeriod"
-                value={formData.pricePeriod}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              >
-                <option value="total">One-time Payment</option>
-                <option value="day">Per Day</option>
-                <option value="week">Per Week</option>
-                <option value="month">Per Month</option>
-                <option value="year">Per Year</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
                 Location <span className="text-red-600">*</span>
               </label>
               <input
@@ -207,41 +181,6 @@ function EditProperty() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
-                Email <span className="text-red-600">*</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="contact@example.com"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
-                Phone Number <span className="text-red-600">*</span>
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="9876543210"
-                pattern="[0-9]{10}"
-                maxLength="10"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                10-digit number without spaces or special characters
-              </p>
             </div>
 
             <div>

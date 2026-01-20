@@ -12,6 +12,9 @@ import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
 import AddProperty from "./pages/AddProperty";
 import EditProperty from "./pages/EditProperty";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import EditHomepage from "./pages/EditHomepage";
 import DashboardLayout from "./components/DashboardLayout";
 
 function PrivateRoute({ children }) {
@@ -80,6 +83,36 @@ function App() {
             <PrivateRoute>
               <DashboardLayout>
                 <ChangePassword />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/about-us"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <AboutUs />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/contact-us"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <ContactUs />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit-homepage"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <EditHomepage />
               </DashboardLayout>
             </PrivateRoute>
           }

@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 
 function Sidebar() {
   const location = useLocation();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const menuItems = [
     { path: "/dashboard", label: "Dashboard", icon: "📊" },
@@ -11,6 +12,24 @@ function Sidebar() {
     { path: "/change-password", label: "Change Password", icon: "🔒" },
     // { path: "/settings", label: "Settings", icon: "⚙️" },
   ];
+
+  if (user.role === "admin") {
+    menuItems.splice(1, 0, {
+      path: "/edit-homepage",
+      label: "Edit Homepage",
+      icon: "🏠",
+    });
+    menuItems.splice(3, 0, {
+      path: "/about-us",
+      label: "About Us",
+      icon: "ℹ️",
+    });
+    menuItems.splice(4, 0, {
+      path: "/contact-us",
+      label: "Contact Us",
+      icon: "📞",
+    });
+  }
 
   return (
     <aside className="fixed top-16 left-0 bottom-0 w-64 bg-white border-r border-gray-200 overflow-y-auto z-40">

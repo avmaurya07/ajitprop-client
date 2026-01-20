@@ -172,15 +172,15 @@ function Properties() {
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex flex-col">
-                        <span className="text-base font-bold text-blue-600">
-                          ₹{property.price.toLocaleString()}
-                        </span>
-                        {property.pricePeriod &&
-                          property.pricePeriod !== "total" && (
-                            <span className="text-xs text-gray-500 font-medium">
-                              per {property.pricePeriod}
-                            </span>
-                          )}
+                        {property.price > 0 ? (
+                          <span className="text-base font-bold text-blue-600">
+                            ₹{property.price.toLocaleString()}
+                          </span>
+                        ) : (
+                          <span className="text-sm text-gray-500">
+                            Price on Request
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-5">
