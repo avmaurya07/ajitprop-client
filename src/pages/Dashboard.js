@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const [refreshKey, setRefreshKey] = useState(0);
 
   return (
     <div className="p-6">

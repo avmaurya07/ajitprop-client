@@ -11,7 +11,7 @@ import HomeVideoModal from "../components/HomeVideoModal";
 import FooterModal from "../components/FooterModal";
 
 function EditHomepage() {
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [, setRefreshKey] = useState(0);
 
   // Modal states
   const [modals, setModals] = useState({
