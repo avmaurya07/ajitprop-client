@@ -46,7 +46,7 @@ function AboutUsModal({ isOpen, onClose, onSave }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg w-3/4 max-w-4xl">
+      <div className="bg-white p-6 rounded-lg w-3/4 max-w-4xl max-h-[80vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-4">Edit About Us</h2>
         <CKEditor
           editor={ClassicEditor}
@@ -55,6 +55,7 @@ function AboutUsModal({ isOpen, onClose, onSave }) {
             ckfinder: {
               uploadUrl: `${process.env.REACT_APP_API_URL}/api/upload/ckeditor`,
             },
+            height: "500px",
           }}
           onChange={(event, editor) => {
             const data = editor.getData();
