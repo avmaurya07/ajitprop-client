@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ImageUploader from "./ImageUploader";
 
 const HomeAboutModal = ({ isOpen, onClose, onSave }) => {
+  const frontendUrl =
+    process.env.REACT_APP_FRONTEND_URL || "http://localhost:3001";
   const [formData, setFormData] = useState({
     title: "",
     subtitle: "",
@@ -209,41 +212,71 @@ const HomeAboutModal = ({ isOpen, onClose, onSave }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">
-                Main Image URL
+                Main Image
               </label>
-              <input
-                type="text"
-                value={formData.mainImage}
-                onChange={(e) =>
-                  setFormData({ ...formData, mainImage: e.target.value })
+              {formData.mainImage && (
+                <div className="mb-2">
+                  <img
+                    src={
+                      formData.mainImage.includes("http")
+                        ? formData.mainImage
+                        : `${frontendUrl}/${formData.mainImage}`
+                    }
+                    alt="Logo"
+                    className="w-20 h-10 object-contain"
+                  />
+                </div>
+              )}
+              <ImageUploader
+                onUploadSuccess={(urls) =>
+                  setFormData({ ...formData, mainImage: urls[0] })
                 }
-                className="w-full p-2 border rounded"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                Secondary Image URL
+                Secondary Image
               </label>
-              <input
-                type="text"
-                value={formData.secondaryImage}
-                onChange={(e) =>
-                  setFormData({ ...formData, secondaryImage: e.target.value })
+              {formData.secondaryImage && (
+                <div className="mb-2">
+                  <img
+                    src={
+                      formData.secondaryImage.includes("http")
+                        ? formData.secondaryImage
+                        : `${frontendUrl}/${formData.secondaryImage}`
+                    }
+                    alt="Secondary"
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                </div>
+              )}
+              <ImageUploader
+                onUploadSuccess={(urls) =>
+                  setFormData({ ...formData, secondaryImage: urls[0] })
                 }
-                className="w-full p-2 border rounded"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                Right Shape Image URL
+                Right Shape Image
               </label>
-              <input
-                type="text"
-                value={formData.rightShapeImage}
-                onChange={(e) =>
-                  setFormData({ ...formData, rightShapeImage: e.target.value })
+              {formData.rightShapeImage && (
+                <div className="mb-2">
+                  <img
+                    src={
+                      formData.rightShapeImage.includes("http")
+                        ? formData.rightShapeImage
+                        : `${frontendUrl}/${formData.rightShapeImage}`
+                    }
+                    alt="Right Shape"
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                </div>
+              )}
+              <ImageUploader
+                onUploadSuccess={(urls) =>
+                  setFormData({ ...formData, rightShapeImage: urls[0] })
                 }
-                className="w-full p-2 border rounded"
               />
             </div>
           </div>

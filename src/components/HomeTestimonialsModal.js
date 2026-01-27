@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ImageUploader from "./ImageUploader";
 
 const HomeTestimonialsModal = ({ isOpen, onClose, onSave }) => {
+  const frontendUrl =
+    process.env.REACT_APP_FRONTEND_URL || "http://localhost:3001";
   const [formData, setFormData] = useState({
     title: "",
     subtitle: "",
@@ -178,28 +181,48 @@ const HomeTestimonialsModal = ({ isOpen, onClose, onSave }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">
-                Quote Icon URL
+                Quote Icon
               </label>
-              <input
-                type="text"
-                value={formData.quoteIcon}
-                onChange={(e) =>
-                  setFormData({ ...formData, quoteIcon: e.target.value })
+              {formData.quoteIcon && (
+                <div className="mb-2">
+                  <img
+                    src={
+                      formData.quoteIcon.includes("http")
+                        ? formData.quoteIcon
+                        : `${frontendUrl}/${formData.quoteIcon}`
+                    }
+                    alt="Logo"
+                    className="w-20 h-10 object-contain"
+                  />
+                </div>
+              )}
+              <ImageUploader
+                onUploadSuccess={(urls) =>
+                  setFormData({ ...formData, quoteIcon: urls[0] })
                 }
-                className="w-full p-2 border rounded"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                Client Info Image URL
+                Client Info Image
               </label>
-              <input
-                type="text"
-                value={formData.clientInfoImage}
-                onChange={(e) =>
-                  setFormData({ ...formData, clientInfoImage: e.target.value })
+              {formData.clientInfoImage && (
+                <div className="mb-2">
+                  <img
+                    src={
+                      formData.clientInfoImage.includes("http")
+                        ? formData.clientInfoImage
+                        : `${frontendUrl}/${formData.clientInfoImage}`
+                    }
+                    alt="Logo"
+                    className="w-20 h-10 object-contain"
+                  />
+                </div>
+              )}
+              <ImageUploader
+                onUploadSuccess={(urls) =>
+                  setFormData({ ...formData, clientInfoImage: urls[0] })
                 }
-                className="w-full p-2 border rounded"
               />
             </div>
           </div>
@@ -282,15 +305,25 @@ const HomeTestimonialsModal = ({ isOpen, onClose, onSave }) => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">
-                      Image URL
+                      Image
                     </label>
-                    <input
-                      type="text"
-                      value={testimonial.image}
-                      onChange={(e) =>
-                        handleTestimonialChange(index, "image", e.target.value)
+                    {testimonial.image && (
+                      <div className="mb-2">
+                        <img
+                          src={
+                            formData.quoteIcon.includes("http")
+                              ? formData.quoteIcon
+                              : `${frontendUrl}/${formData.quoteIcon}`
+                          }
+                          alt="Logo"
+                          className="w-20 h-10 object-contain"
+                        />
+                      </div>
+                    )}
+                    <ImageUploader
+                      onUploadSuccess={(urls) =>
+                        handleTestimonialChange(index, "image", urls[0])
                       }
-                      className="w-full p-2 border rounded"
                     />
                   </div>
                   <div>

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ImageUploader from "./ImageUploader";
 
 function FooterModal({ isOpen, onClose, onSave }) {
+  const frontendUrl =
+    process.env.REACT_APP_FRONTEND_URL || "http://localhost:3001";
   const [footer, setFooter] = useState({
     logo: "",
     description: "",
@@ -167,16 +170,25 @@ function FooterModal({ isOpen, onClose, onSave }) {
             {/* Logo */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Logo URL
+                Logo
               </label>
-              <input
-                type="text"
-                value={footer.logo}
-                onChange={(e) =>
-                  setFooter((prev) => ({ ...prev, logo: e.target.value }))
+              {footer.logo && (
+                <div className="mb-2">
+                  <img
+                    src={
+                      footer.logo.includes("http")
+                        ? footer.logo
+                        : `${frontendUrl}/${footer.logo}`
+                    }
+                    alt="Logo"
+                    className="w-20 h-10 object-contain"
+                  />
+                </div>
+              )}
+              <ImageUploader
+                onUploadSuccess={(urls) =>
+                  setFooter((prev) => ({ ...prev, logo: urls[0] }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Logo image URL"
               />
             </div>
 

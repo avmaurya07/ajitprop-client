@@ -51,6 +51,11 @@ function AboutUsModal({ isOpen, onClose, onSave }) {
         <CKEditor
           editor={ClassicEditor}
           data={content}
+          config={{
+            ckfinder: {
+              uploadUrl: `${process.env.REACT_APP_API_URL}/api/upload/ckeditor`,
+            },
+          }}
           onChange={(event, editor) => {
             const data = editor.getData();
             setContent(data);

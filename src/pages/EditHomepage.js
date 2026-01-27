@@ -55,6 +55,12 @@ function EditHomepage() {
       icon: "🏠",
     },
     {
+      id: "featured",
+      title: "Featured Properties",
+      description: "Configure featured properties section title and settings",
+      icon: "🌟",
+    },
+    {
       id: "about",
       title: "About Section",
       description: "Edit about section content, features, and images",
@@ -65,6 +71,12 @@ function EditHomepage() {
       title: "Property Feature",
       description: "Manage property feature section content and images",
       icon: "⭐",
+    },
+    {
+      id: "video",
+      title: "Video Section",
+      description: "Manage homepage video content and settings",
+      icon: "🎥",
     },
     {
       id: "counter",
@@ -83,18 +95,6 @@ function EditHomepage() {
       title: "Contact Section",
       description: "Edit contact form settings and map embed",
       icon: "📍",
-    },
-    {
-      id: "featured",
-      title: "Featured Properties",
-      description: "Configure featured properties section title and settings",
-      icon: "🌟",
-    },
-    {
-      id: "video",
-      title: "Video Section",
-      description: "Manage homepage video content and settings",
-      icon: "🎥",
     },
     {
       id: "footer",

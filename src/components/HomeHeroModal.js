@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ImageUploader from "./ImageUploader";
 
 const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
+  const frontendUrl =
+    process.env.REACT_APP_FRONTEND_URL || "http://localhost:3001";
   const [formData, setFormData] = useState({
     title: "",
     subtitle: "",
@@ -123,15 +126,25 @@ const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
 
           <div>
             <label className="block text-sm font-medium mb-1">
-              Background Image URL
+              Background Image
             </label>
-            <input
-              type="text"
-              value={formData.backgroundImage}
-              onChange={(e) =>
-                setFormData({ ...formData, backgroundImage: e.target.value })
+            {formData.backgroundImage && (
+              <div className="mb-2">
+                <img
+                  src={
+                    formData.backgroundImage.includes("http")
+                      ? formData.backgroundImage
+                      : `${frontendUrl}/${formData.backgroundImage}`
+                  }
+                  alt="Logo"
+                  className="w-20 h-10 object-contain"
+                />
+              </div>
+            )}
+            <ImageUploader
+              onUploadSuccess={(urls) =>
+                setFormData({ ...formData, backgroundImage: urls[0] })
               }
-              className="w-full p-2 border rounded"
             />
           </div>
 

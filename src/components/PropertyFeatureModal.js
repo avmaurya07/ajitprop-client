@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ImageUploader from "./ImageUploader";
 
 const PropertyFeatureModal = ({ isOpen, onClose, onSave }) => {
+  const frontendUrl =
+    process.env.REACT_APP_FRONTEND_URL || "http://localhost:3001";
   const [formData, setFormData] = useState({
     title: "",
     subtitle: "",
@@ -137,28 +140,48 @@ const PropertyFeatureModal = ({ isOpen, onClose, onSave }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">
-                Feature Image URL
+                Feature Image
               </label>
-              <input
-                type="text"
-                value={formData.featureImage}
-                onChange={(e) =>
-                  setFormData({ ...formData, featureImage: e.target.value })
+              {formData.featureImage && (
+                <div className="mb-2">
+                  <img
+                    src={
+                      formData.featureImage.includes("http")
+                        ? formData.featureImage
+                        : `${frontendUrl}/${formData.featureImage}`
+                    }
+                    alt="Logo"
+                    className="w-20 h-10 object-contain"
+                  />
+                </div>
+              )}
+              <ImageUploader
+                onUploadSuccess={(urls) =>
+                  setFormData({ ...formData, featureImage: urls[0] })
                 }
-                className="w-full p-2 border rounded"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                Background Image URL
+                Background Image
               </label>
-              <input
-                type="text"
-                value={formData.backgroundImage}
-                onChange={(e) =>
-                  setFormData({ ...formData, backgroundImage: e.target.value })
+              {formData.backgroundImage && (
+                <div className="mb-2">
+                  <img
+                    src={
+                      formData.backgroundImage.includes("http")
+                        ? formData.backgroundImage
+                        : `${frontendUrl}/${formData.backgroundImage}`
+                    }
+                    alt="Background"
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                </div>
+              )}
+              <ImageUploader
+                onUploadSuccess={(urls) =>
+                  setFormData({ ...formData, backgroundImage: urls[0] })
                 }
-                className="w-full p-2 border rounded"
               />
             </div>
           </div>

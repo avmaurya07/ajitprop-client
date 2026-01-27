@@ -263,6 +263,11 @@ function AddProperty() {
               <CKEditor
                 editor={ClassicEditor}
                 data={formData.description}
+                config={{
+                  ckfinder: {
+                    uploadUrl: `${process.env.REACT_APP_API_URL}/api/upload/ckeditor`,
+                  },
+                }}
                 onChange={(event, editor) => {
                   const data = editor.getData();
                   setFormData((prev) => ({ ...prev, description: data }));

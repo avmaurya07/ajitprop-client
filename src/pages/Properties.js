@@ -3,6 +3,16 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 function Properties() {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [beds, setBeds] = useState("");
+  const [baths, setBaths] = useState("");
+  const [minArea, setMinArea] = useState("");
+  const [maxArea, setMaxArea] = useState("");
+
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -26,247 +36,335 @@ function Properties() {
     }
   };
 
-  const totalPages = Math.ceil(properties.length / itemsPerPage);
+  const filteredProperties = properties.filter((property) => {
+    const matchesSearch =
+      property.name.toLowerCase().includes(search.toLowerCase()) ||
+      property.location.toLowerCase().includes(search.toLowerCase());
+
+    const matchesStatus = !statusFilter || property.status === statusFilter;
+    const matchesType = !typeFilter || property.type === typeFilter;
+
+    const matchesMinPrice = !minPrice || property.price >= Number(minPrice);
+    const matchesMaxPrice = !maxPrice || property.price <= Number(maxPrice);
+
+    const matchesBeds = !beds || property.bedrooms >= Number(beds);
+
+    const matchesBaths = !baths || property.bathrooms >= Number(baths);
+
+    const matchesMinArea = !minArea || property.area >= Number(minArea);
+
+    const matchesMaxArea = !maxArea || property.area <= Number(maxArea);
+
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesType &&
+      matchesMinPrice &&
+      matchesMaxPrice &&
+      matchesBeds &&
+      matchesBaths &&
+      matchesMinArea &&
+      matchesMaxArea
+    );
+  });
+
+  const totalPages = Math.ceil(filteredProperties.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentProperties = properties.slice(startIndex, endIndex);
+  const currentProperties = filteredProperties.slice(startIndex, endIndex);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    search,
+    statusFilter,
+    typeFilter,
+    minPrice,
+    maxPrice,
+    beds,
+    baths,
+    minArea,
+    maxArea,
+  ]);
 
   const goToPage = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this property?")) {
+      try {
+        const token = localStorage.getItem("token");
+        await axios.delete(
+          `${process.env.REACT_APP_API_URL}/api/properties/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        // Refresh the properties list after deletion
+        fetchProperties();
+      } catch (err) {
+        setError("Failed to delete property");
+      }
+    }
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-600">Loading properties...</div>
+      <div className="flex items-center justify-center h-64 text-sm text-gray-500">
+        Loading properties...
       </div>
     );
   }
 
   return (
     <div>
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-semibold text-gray-800">Properties</h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Showing {properties.length > 0 ? startIndex + 1 : 0} -{" "}
-            {Math.min(endIndex, properties.length)} of {properties.length}{" "}
-            properties
+          <h1 className="text-2xl font-semibold text-gray-800">Properties</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Showing {properties.length > 0 ? startIndex + 1 : 0} –{" "}
+            {Math.min(endIndex, properties.length)} of{" "}
+            {filteredProperties.length} properties
           </p>
         </div>
         <Link
           to="/properties/add"
-          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          className="px-5 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-800 transition"
         >
-          Add New Property
+          + Add Property
         </Link>
       </div>
 
+      {/* Error */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4">
+        <div className="mb-4 px-4 py-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-md">
           {error}
         </div>
       )}
+      {/* Filters */}
+      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-8 gap-4">
+          {/* Search */}
+          <input
+            type="text"
+            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="px-3 py-2 text-sm border rounded-md"
+          />
 
-      {properties.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-12 text-center">
-          <p className="text-gray-600 mb-4">No properties found</p>
-          <Link
-            to="/properties/add"
-            className="text-blue-600 hover:text-blue-700"
+          {/* Status */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-2 text-sm border rounded-md"
           >
-            Add your first property
-          </Link>
+            <option value="">Status</option>
+            <option value="available">Available</option>
+            <option value="sold">Sold</option>
+            <option value="rented">Rented</option>
+          </select>
+
+          {/* Type */}
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="px-3 py-2 text-sm border rounded-md capitalize"
+          >
+            <option value="">Type</option>
+            <option value="apartment">Apartment</option>
+            <option value="villa">Villa</option>
+            <option value="plot">Plot</option>
+          </select>
+
+          {/* Beds */}
+          <input
+            type="number"
+            min="0"
+            placeholder="Beds ≥"
+            value={beds}
+            onChange={(e) => setBeds(e.target.value)}
+            className="px-3 py-2 text-sm border rounded-md"
+          />
+
+          {/* Baths */}
+          <input
+            type="number"
+            min="0"
+            placeholder="Baths ≥"
+            value={baths}
+            onChange={(e) => setBaths(e.target.value)}
+            className="px-3 py-2 text-sm border rounded-md"
+          />
+
+          {/* Min Area */}
+          <input
+            type="number"
+            min="0"
+            placeholder="Min sqft"
+            value={minArea}
+            onChange={(e) => setMinArea(e.target.value)}
+            className="px-3 py-2 text-sm border rounded-md"
+          />
+
+          {/* Max Area */}
+          <input
+            type="number"
+            min="0"
+            placeholder="Max sqft"
+            value={maxArea}
+            onChange={(e) => setMaxArea(e.target.value)}
+            className="px-3 py-2 text-sm border rounded-md"
+          />
+
+          {/* Clear */}
+          <button
+            onClick={() => {
+              setSearch("");
+              setStatusFilter("");
+              setTypeFilter("");
+              setMinPrice("");
+              setMaxPrice("");
+              setBeds("");
+              setBaths("");
+              setMinArea("");
+              setMaxArea("");
+            }}
+            className="px-3 py-2 text-sm border rounded-md hover:bg-gray-100"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+
+      {/* Empty State */}
+      {properties.length === 0 ? (
+        <div className="bg-white border border-gray-200 rounded-lg p-12 text-center text-sm text-gray-500">
+          No properties found.
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    S.No
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Property
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Location
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Price
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Details
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  {[
+                    "S.No",
+                    "Property",
+                    "Location",
+                    "Type",
+                    "Price",
+                    "Details",
+                    "Status",
+                    "Actions",
+                  ].map((head) => (
+                    <th
+                      key={head}
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-600"
+                    >
+                      {head}
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-100">
+
+              <tbody className="divide-y divide-gray-100">
                 {currentProperties.map((property, index) => (
                   <tr
                     key={property._id}
-                    className="hover:bg-blue-50 transition-colors duration-150 ease-in-out"
+                    className="hover:bg-gray-50 transition"
                   >
-                    <td className="px-6 py-5">
-                      <span className="text-sm font-medium text-gray-900">
-                        {(currentPage - 1) * 10 + index + 1}
-                      </span>
+                    {/* S.No */}
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {(currentPage - 1) * itemsPerPage + index + 1}
                     </td>
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-semibold text-gray-900">
-                            {property.name}
+
+                    {/* Property */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-medium text-gray-900">
+                          {property.name}
+                        </span>
+                        {property.featured && (
+                          <span className="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-700 rounded-md">
+                            Featured
                           </span>
-                          {property.featured && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-bold bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 rounded-full border border-yellow-300">
-                              ⭐ Featured
-                            </span>
-                          )}
-                          {property.available === false && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-bold bg-red-100 text-red-800 rounded-full border border-red-300">
-                              🚫 Unavailable
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-1 text-sm text-gray-700">
-                        <svg
-                          className="w-4 h-4 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                        {property.location}
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full capitalize">
-                        {property.type}
-                      </span>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col">
-                        {property.price > 0 ? (
-                          <span className="text-base font-bold text-blue-600">
-                            ₹{property.price.toLocaleString()}
-                          </span>
-                        ) : (
-                          <span className="text-sm text-gray-500">
-                            Price on Request
+                        )}
+                        {property.available === false && (
+                          <span className="px-2 py-0.5 text-xs bg-red-100 text-red-700 rounded-md">
+                            Unavailable
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-3 text-sm text-gray-600">
-                        <div className="flex items-center gap-1">
-                          <span className="text-base">🛏️</span>
-                          <span className="font-medium">
-                            {property.bedrooms}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span className="text-base">🚿</span>
-                          <span className="font-medium">
-                            {property.bathrooms}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span className="text-base">📏</span>
-                          <span className="font-medium">
-                            {property.area} sqft
-                          </span>
-                        </div>
-                      </div>
+
+                    {/* Location */}
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {property.location}
                     </td>
-                    <td className="px-6 py-5">
-                      <span
-                        className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full ${
-                          property.status === "available"
-                            ? "bg-green-100 text-green-800 border border-green-300"
-                            : property.status === "sold"
-                              ? "bg-red-100 text-red-800 border border-red-300"
-                              : property.status === "rented"
-                                ? "bg-blue-100 text-blue-800 border border-blue-300"
-                                : "bg-yellow-100 text-yellow-800 border border-yellow-300"
-                        }`}
-                      >
-                        {property.status.charAt(0).toUpperCase() +
-                          property.status.slice(1)}
+
+                    {/* Type */}
+                    <td className="px-6 py-4">
+                      <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-md capitalize">
+                        {property.type}
                       </span>
                     </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center justify-center gap-2">
+
+                    {/* Price */}
+                    <td className="px-6 py-4 text-sm font-medium text-gray-800">
+                      {property.price > 0
+                        ? `₹${property.price.toLocaleString()}`
+                        : "On Request"}
+                    </td>
+
+                    {/* Details */}
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {property.bedrooms} Bed · {property.bathrooms} Bath ·{" "}
+                      {property.area} sqft
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-2.5 py-1 text-xs rounded-md font-medium ${
+                          property.status === "available"
+                            ? "bg-green-100 text-green-700"
+                            : property.status === "sold"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-blue-100 text-blue-700"
+                        }`}
+                      >
+                        {property.status}
+                      </span>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2 justify-center">
                         <Link
                           to={`/properties/${property._id}`}
-                          className="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-150 shadow-sm hover:shadow-md"
+                          className="p-2 rounded-md text-gray-600 hover:bg-gray-100 hover:text-blue-600"
+                          title="View"
                         >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            />
-                          </svg>
-                          View
+                          👁
                         </Link>
                         <Link
                           to={`/properties/${property._id}/edit`}
-                          className="inline-flex items-center gap-1 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors duration-150 shadow-sm hover:shadow-md"
+                          className="p-2 rounded-md text-gray-600 hover:bg-gray-100 hover:text-green-600"
+                          title="Edit"
                         >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            />
-                          </svg>
-                          Edit
+                          ✏️
                         </Link>
+                        <button
+                          onClick={() => handleDelete(property._id)}
+                          className="p-2 rounded-md text-gray-600 hover:bg-gray-100 hover:text-green-600"
+                          title="Delete"
+                        >
+                          ❌
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -275,75 +373,40 @@ function Properties() {
             </table>
           </div>
 
+          {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-600">
-                  Page {currentPage} of {totalPages}
-                </div>
-                <div className="flex gap-2">
+            <div className="flex justify-between items-center px-6 py-4 border-t text-sm text-gray-600">
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 border rounded-md disabled:opacity-40"
+                >
+                  Prev
+                </button>
+                {[...Array(totalPages)].map((_, i) => (
                   <button
-                    onClick={() => goToPage(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      currentPage === 1
-                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                    key={i}
+                    onClick={() => goToPage(i + 1)}
+                    className={`w-9 h-9 rounded-md border ${
+                      currentPage === i + 1
+                        ? "bg-gray-900 text-white border-gray-900"
+                        : "hover:bg-gray-100"
                     }`}
                   >
-                    Previous
+                    {i + 1}
                   </button>
-
-                  <div className="flex gap-1">
-                    {[...Array(totalPages)].map((_, index) => {
-                      const page = index + 1;
-                      if (
-                        page === 1 ||
-                        page === totalPages ||
-                        (page >= currentPage - 1 && page <= currentPage + 1)
-                      ) {
-                        return (
-                          <button
-                            key={page}
-                            onClick={() => goToPage(page)}
-                            className={`w-10 h-10 rounded-lg font-medium transition-colors ${
-                              currentPage === page
-                                ? "bg-blue-600 text-white"
-                                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-                            }`}
-                          >
-                            {page}
-                          </button>
-                        );
-                      } else if (
-                        page === currentPage - 2 ||
-                        page === currentPage + 2
-                      ) {
-                        return (
-                          <span
-                            key={page}
-                            className="w-10 h-10 flex items-center justify-center text-gray-400"
-                          >
-                            ...
-                          </span>
-                        );
-                      }
-                      return null;
-                    })}
-                  </div>
-
-                  <button
-                    onClick={() => goToPage(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      currentPage === totalPages
-                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-                    }`}
-                  >
-                    Next
-                  </button>
-                </div>
+                ))}
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 border rounded-md disabled:opacity-40"
+                >
+                  Next
+                </button>
               </div>
             </div>
           )}
