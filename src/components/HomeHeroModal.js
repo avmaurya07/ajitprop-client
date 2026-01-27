@@ -204,7 +204,7 @@ const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
           </div>
 
           {/* Search Locations */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2">
               Search Locations
             </label>
@@ -256,7 +256,7 @@ const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
             >
               Add Location
             </button>
-          </div>
+          </div> */}
 
           {/* Button Links */}
           <div>

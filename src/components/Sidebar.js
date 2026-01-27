@@ -19,11 +19,11 @@ function Sidebar() {
       label: "Edit Homepage",
       icon: "🏠",
     });
-    menuItems.splice(3, 0, {
-      path: "/about-us",
-      label: "About Us",
-      icon: "ℹ️",
-    });
+    // menuItems.splice(3, 0, {
+    //   path: "/about-us",
+    //   label: "About Us",
+    //   icon: "ℹ️",
+    // });
     menuItems.splice(4, 0, {
       path: "/contact-us",
       label: "Contact Us",
