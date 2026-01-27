@@ -81,15 +81,15 @@ function FooterModal({ isOpen, onClose, onSave }) {
     }
   };
 
-  const updateContactInfo = (field, value) => {
-    setFooter((prev) => ({
-      ...prev,
-      contactInfo: {
-        ...prev.contactInfo,
-        [field]: value,
-      },
-    }));
-  };
+  // const updateContactInfo = (field, value) => {
+  //   setFooter((prev) => ({
+  //     ...prev,
+  //     contactInfo: {
+  //       ...prev.contactInfo,
+  //       [field]: value,
+  //     },
+  //   }));
+  // };
 
   const updateNewsletter = (field, value) => {
     setFooter((prev) => ({
