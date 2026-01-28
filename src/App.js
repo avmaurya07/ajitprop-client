@@ -15,6 +15,7 @@ import EditProperty from "./pages/EditProperty";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import EditHomepage from "./pages/EditHomepage";
+import Messages from "./pages/Messages";
 import DashboardLayout from "./components/DashboardLayout";
 
 function PrivateRoute({ children }) {
@@ -113,6 +114,16 @@ function App() {
             <PrivateRoute>
               <DashboardLayout>
                 <EditHomepage />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <Messages />
               </DashboardLayout>
             </PrivateRoute>
           }

@@ -29,6 +29,11 @@ function Sidebar() {
       label: "Contact Us",
       icon: "📞",
     });
+    menuItems.splice(5, 0, {
+      path: "/messages",
+      label: "Messages",
+      icon: "💬",
+    });
   }
 
   return (
