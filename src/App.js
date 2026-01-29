@@ -17,10 +17,10 @@ import ContactUs from "./pages/ContactUs";
 import EditHomepage from "./pages/EditHomepage";
 import Messages from "./pages/Messages";
 import DashboardLayout from "./components/DashboardLayout";
+import { isAuthenticated } from "./utils/auth";
 
 function PrivateRoute({ children }) {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" />;
+  return isAuthenticated() ? children : <Navigate to="/login" />;
 }
 
 function App() {
