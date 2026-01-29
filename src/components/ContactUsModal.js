@@ -5,6 +5,14 @@ function ContactUsModal({ isOpen, onClose, onSave }) {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [socialLinks, setSocialLinks] = useState({
+    facebook: "",
+    twitter: "",
+    instagram: "",
+    linkedin: "",
+    youtube: "",
+    whatsapp: "",
+  });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -19,6 +27,16 @@ function ContactUsModal({ isOpen, onClose, onSave }) {
       setPhone(response.data ? response.data.phone : "");
       setEmail(response.data ? response.data.email : "");
       setAddress(response.data ? response.data.address : "");
+      setSocialLinks(
+        response.data?.socialLinks || {
+          facebook: "",
+          twitter: "",
+          instagram: "",
+          linkedin: "",
+          youtube: "",
+          whatsapp: "",
+        },
+      );
     } catch (error) {
       console.error("Error fetching contact:", error);
     }
@@ -30,7 +48,7 @@ function ContactUsModal({ isOpen, onClose, onSave }) {
       const token = localStorage.getItem("token");
       await axios.put(
         "/api/contact",
-        { phone, email, address },
+        { phone, email, address, socialLinks },
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -86,6 +104,95 @@ function ContactUsModal({ isOpen, onClose, onSave }) {
             className="w-full p-2 border border-gray-300 rounded"
             placeholder="Enter office address"
           />
+        </div>
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold mb-2">Social Media Links</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Facebook URL
+              </label>
+              <input
+                type="text"
+                value={socialLinks.facebook}
+                onChange={(e) =>
+                  setSocialLinks({ ...socialLinks, facebook: e.target.value })
+                }
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="https://facebook.com/yourpage"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Twitter URL
+              </label>
+              <input
+                type="text"
+                value={socialLinks.twitter}
+                onChange={(e) =>
+                  setSocialLinks({ ...socialLinks, twitter: e.target.value })
+                }
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="https://twitter.com/yourhandle"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Instagram URL
+              </label>
+              <input
+                type="text"
+                value={socialLinks.instagram}
+                onChange={(e) =>
+                  setSocialLinks({ ...socialLinks, instagram: e.target.value })
+                }
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="https://instagram.com/yourhandle"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                LinkedIn URL
+              </label>
+              <input
+                type="text"
+                value={socialLinks.linkedin}
+                onChange={(e) =>
+                  setSocialLinks({ ...socialLinks, linkedin: e.target.value })
+                }
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="https://linkedin.com/company/yourcompany"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                YouTube URL
+              </label>
+              <input
+                type="text"
+                value={socialLinks.youtube}
+                onChange={(e) =>
+                  setSocialLinks({ ...socialLinks, youtube: e.target.value })
+                }
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="https://youtube.com/c/yourchannel"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                WhatsApp Number
+              </label>
+              <input
+                type="text"
+                value={socialLinks.whatsapp}
+                onChange={(e) =>
+                  setSocialLinks({ ...socialLinks, whatsapp: e.target.value })
+                }
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="919876543210"
+              />
+            </div>
+          </div>
         </div>
         <div className="flex justify-end mt-4">
           <button

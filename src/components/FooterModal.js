@@ -25,6 +25,14 @@ function FooterModal({ isOpen, onClose, onSave }) {
       },
     ],
     copyright: "",
+    socialLinks: {
+      facebook: "",
+      twitter: "",
+      instagram: "",
+      linkedin: "",
+      youtube: "",
+      whatsapp: "",
+    },
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -377,6 +385,135 @@ function FooterModal({ isOpen, onClose, onSave }) {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Social Media Links */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Social Media Links
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Facebook URL
+                  </label>
+                  <input
+                    type="text"
+                    value={footer.socialLinks?.facebook || ""}
+                    onChange={(e) =>
+                      setFooter((prev) => ({
+                        ...prev,
+                        socialLinks: {
+                          ...prev.socialLinks,
+                          facebook: e.target.value,
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://facebook.com/yourpage"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Twitter URL
+                  </label>
+                  <input
+                    type="text"
+                    value={footer.socialLinks?.twitter || ""}
+                    onChange={(e) =>
+                      setFooter((prev) => ({
+                        ...prev,
+                        socialLinks: {
+                          ...prev.socialLinks,
+                          twitter: e.target.value,
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://twitter.com/yourhandle"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Instagram URL
+                  </label>
+                  <input
+                    type="text"
+                    value={footer.socialLinks?.instagram || ""}
+                    onChange={(e) =>
+                      setFooter((prev) => ({
+                        ...prev,
+                        socialLinks: {
+                          ...prev.socialLinks,
+                          instagram: e.target.value,
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://instagram.com/yourhandle"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    LinkedIn URL
+                  </label>
+                  <input
+                    type="text"
+                    value={footer.socialLinks?.linkedin || ""}
+                    onChange={(e) =>
+                      setFooter((prev) => ({
+                        ...prev,
+                        socialLinks: {
+                          ...prev.socialLinks,
+                          linkedin: e.target.value,
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://linkedin.com/company/yourcompany"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    YouTube URL
+                  </label>
+                  <input
+                    type="text"
+                    value={footer.socialLinks?.youtube || ""}
+                    onChange={(e) =>
+                      setFooter((prev) => ({
+                        ...prev,
+                        socialLinks: {
+                          ...prev.socialLinks,
+                          youtube: e.target.value,
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://youtube.com/c/yourchannel"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    WhatsApp Number
+                  </label>
+                  <input
+                    type="text"
+                    value={footer.socialLinks?.whatsapp || ""}
+                    onChange={(e) =>
+                      setFooter((prev) => ({
+                        ...prev,
+                        socialLinks: {
+                          ...prev.socialLinks,
+                          whatsapp: e.target.value,
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="919876543210"
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Copyright */}
