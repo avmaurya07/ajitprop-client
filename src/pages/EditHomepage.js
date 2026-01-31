@@ -55,6 +55,12 @@ function EditHomepage() {
       icon: "🏠",
     },
     {
+      id: "video",
+      title: "Video Section",
+      description: "Manage homepage video content and settings",
+      icon: "🎥",
+    },
+    {
       id: "featured",
       title: "Featured Properties",
       description: "Configure featured properties section title and settings",
@@ -72,12 +78,7 @@ function EditHomepage() {
       description: "Manage property feature section content and images",
       icon: "⭐",
     },
-    {
-      id: "video",
-      title: "Video Section",
-      description: "Manage homepage video content and settings",
-      icon: "🎥",
-    },
+
     {
       id: "counter",
       title: "Counter Section",

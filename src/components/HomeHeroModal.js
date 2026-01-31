@@ -92,7 +92,7 @@ const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
                   setFormData({ ...formData, title: e.target.value })
                 }
                 className="w-full p-2 border rounded"
-                required
+                // required
               />
             </div>
             <div>
@@ -104,7 +104,7 @@ const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
                   setFormData({ ...formData, subtitle: e.target.value })
                 }
                 className="w-full p-2 border rounded"
-                required
+                // required
               />
             </div>
           </div>
@@ -120,7 +120,7 @@ const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
               }
               className="w-full p-2 border rounded"
               rows="3"
-              required
+              // required
             />
           </div>
 

@@ -3,7 +3,7 @@ import axios from "axios";
 
 const HomeVideoModal = ({ isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    videoUrl: "",
+    videoUrl: [],
     title: "",
     description: "",
     isActive: true,
@@ -23,7 +23,11 @@ const HomeVideoModal = ({ isOpen, onClose, onSave }) => {
   const fetchVideoData = async () => {
     try {
       const response = await axios.get("/api/home-video");
-      setFormData(response.data);
+      const data = response.data;
+      setFormData({
+        ...data,
+        videoUrl: Array.isArray(data.videoUrl) ? data.videoUrl : [],
+      });
     } catch (error) {
       console.error("Error fetching video data:", error);
     }
@@ -50,7 +54,7 @@ const HomeVideoModal = ({ isOpen, onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Edit Home Video Section</h2>
           <button
@@ -62,20 +66,7 @@ const HomeVideoModal = ({ isOpen, onClose, onSave }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium mb-1">Video URL</label>
-            <input
-              type="text"
-              value={formData.videoUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, videoUrl: e.target.value })
-              }
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Title</label>
               <input
@@ -87,84 +78,87 @@ const HomeVideoModal = ({ isOpen, onClose, onSave }) => {
                 className="w-full p-2 border rounded"
               />
             </div>
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium mb-1">
                 Description
               </label>
-              <input
-                type="text"
+              <textarea
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
                 className="w-full p-2 border rounded"
+                rows="3"
               />
+            </div> */}
+          </div>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <label className="block text-sm font-medium">Video URLs</label>
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    videoUrl: [...formData.videoUrl, ""],
+                  })
+                }
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                + Add Video
+              </button>
             </div>
+            {formData.videoUrl.map((url, index) => (
+              <div key={index} className="flex gap-2">
+                <input
+                  type="text"
+                  value={url}
+                  onChange={(e) => {
+                    const newUrls = [...formData.videoUrl];
+                    newUrls[index] = e.target.value;
+                    setFormData({ ...formData, videoUrl: newUrls });
+                  }}
+                  className="flex-1 p-2 border rounded"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newUrls = formData.videoUrl.filter(
+                      (_, i) => i !== index,
+                    );
+                    setFormData({ ...formData, videoUrl: newUrls });
+                  }}
+                  className="px-3 py-1 text-red-500 border border-red-500 rounded hover:bg-red-50"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
           </div>
 
-          {/* Video Settings */}
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Video Settings
-            </label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.isActive}
-                  onChange={(e) =>
-                    setFormData({ ...formData, isActive: e.target.checked })
-                  }
-                  className="mr-2"
-                />
-                Active
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.autoplay}
-                  onChange={(e) =>
-                    setFormData({ ...formData, autoplay: e.target.checked })
-                  }
-                  className="mr-2"
-                />
-                Autoplay
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.muted}
-                  onChange={(e) =>
-                    setFormData({ ...formData, muted: e.target.checked })
-                  }
-                  className="mr-2"
-                />
-                Muted
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.loop}
-                  onChange={(e) =>
-                    setFormData({ ...formData, loop: e.target.checked })
-                  }
-                  className="mr-2"
-                />
-                Loop
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.controls}
-                  onChange={(e) =>
-                    setFormData({ ...formData, controls: e.target.checked })
-                  }
-                  className="mr-2"
-                />
-                Controls
-              </label>
-            </div>
-          </div>
+          {/* <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {["isActive", "autoplay", "muted", "loop", "controls"].map(
+              (field) => (
+                <label
+                  key={field}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData[field]}
+                    onChange={(e) =>
+                      setFormData({ ...formData, [field]: e.target.checked })
+                    }
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm font-medium capitalize">
+                    {field.replace(/([A-Z])/g, " $1")}
+                  </span>
+                </label>
+              ),
+            )}
+          </div> */}
 
           <div className="flex justify-end gap-4">
             <button
