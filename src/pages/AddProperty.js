@@ -24,7 +24,7 @@ function AddProperty() {
     metaDescription: "",
     features: "",
     images: [],
-    videos: "",
+    videos: [],
     featured: false,
     available: true,
   });
@@ -47,10 +47,6 @@ function AddProperty() {
       const featuresArray = formData.features
         ? formData.features.split(",").map((f) => f.trim())
         : [];
-      const videosArray = formData.videos
-        ? formData.videos.split(",").map((vid) => vid.trim())
-        : [];
-
       await axios.post(
         `${process.env.REACT_APP_API_URL}/api/properties`,
         {
@@ -61,7 +57,7 @@ function AddProperty() {
           area: Number(formData.area),
           features: featuresArray,
           images: formData.images,
-          videos: videosArray,
+          videos: formData.videos,
         },
         {
           headers: {
@@ -309,44 +305,48 @@ function AddProperty() {
 
             <div className="md:col-span-2">
               <label className="block text-gray-700 text-sm font-medium mb-2">
-                Property Images
+                Main Image <span className="text-red-600">*</span>
               </label>
+              <p className="text-xs text-gray-500 mb-2">
+                This image will be displayed as the primary image for this
+                property
+              </p>
               <ImageUploader
-                multiple={true}
+                multiple={false}
                 onUploadSuccess={(urls) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    images: [...prev.images, ...urls],
-                  }));
+                  setFormData((prev) => {
+                    // Remove old main image if exists, then add new one at index 0
+                    const otherImages = prev.images.slice(1);
+                    return {
+                      ...prev,
+                      images: [urls[0], ...otherImages],
+                    };
+                  });
                 }}
               />
-              {formData.images.length > 0 && (
+              {formData.images.length > 0 && formData.images[0] && (
                 <div className="mt-3">
-                  <p className="text-sm text-gray-600 mb-2">
-                    Uploaded Images ({formData.images.length}):
-                  </p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {formData.images.map((url, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={url}
-                          alt={`Property ${index + 1}`}
-                          className="w-full h-24 object-cover rounded border"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFormData((prev) => ({
-                              ...prev,
-                              images: prev.images.filter((_, i) => i !== index),
-                            }));
-                          }}
-                          className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
+                  <div className="relative group inline-block">
+                    <img
+                      src={formData.images[0]}
+                      alt="Main Property Image"
+                      className="w-48 h-32 object-cover rounded border-2 border-blue-500"
+                    />
+                    <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                      Main Image
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          images: prev.images.slice(1),
+                        }));
+                      }}
+                      className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      ×
+                    </button>
                   </div>
                 </div>
               )}
@@ -354,16 +354,118 @@ function AddProperty() {
 
             <div className="md:col-span-2">
               <label className="block text-gray-700 text-sm font-medium mb-2">
-                Video URLs (comma separated)
+                Additional Images
               </label>
-              <input
-                type="text"
-                name="videos"
-                value={formData.videos}
-                onChange={handleChange}
-                placeholder="https://www.youtube.com/embed/VIDEO_ID, https://www.youtube.com/embed/VIDEO_ID2"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              <p className="text-xs text-gray-500 mb-2">
+                Upload additional images for the property gallery
+              </p>
+              <ImageUploader
+                multiple={true}
+                onUploadSuccess={(urls) => {
+                  setFormData((prev) => {
+                    // Keep main image at index 0, add new images after
+                    const mainImage = prev.images[0] ? [prev.images[0]] : [];
+                    const otherImages = prev.images.slice(1);
+                    return {
+                      ...prev,
+                      images: [...mainImage, ...otherImages, ...urls],
+                    };
+                  });
+                }}
               />
+              {formData.images.length > 1 && (
+                <div className="mt-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    Additional Images ({formData.images.length - 1}):
+                  </p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {formData.images.slice(1).map((url, idx) => {
+                      const index = idx + 1; // Actual index in the images array
+                      return (
+                        <div key={index} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Property ${index}`}
+                            className="w-full h-24 object-cover rounded border"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                images: prev.images.filter(
+                                  (_, i) => i !== index,
+                                ),
+                              }));
+                            }}
+                            className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="md:col-span-2">
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-gray-700 text-sm font-medium">
+                  Video URLs
+                </label>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      videos: [...formData.videos, ""],
+                    })
+                  }
+                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  + Add Video
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mb-3">
+                Add YouTube or direct video URLs for this property
+              </p>
+              {formData.videos.length === 0 ? (
+                <div className="text-sm text-gray-500 italic py-2">
+                  No videos added yet. Click "+ Add Video" to add one.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {formData.videos.map((url, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={url}
+                        onChange={(e) => {
+                          const newVideos = [...formData.videos];
+                          newVideos[index] = e.target.value;
+                          setFormData({ ...formData, videos: newVideos });
+                        }}
+                        placeholder="https://www.youtube.com/embed/VIDEO_ID"
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newVideos = formData.videos.filter(
+                            (_, i) => i !== index,
+                          );
+                          setFormData({ ...formData, videos: newVideos });
+                        }}
+                        className="px-4 py-2 text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
