@@ -9,7 +9,7 @@ const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
     title: "",
     subtitle: "",
     description: "",
-    backgroundImage: "",
+    backgroundImage: [],
     searchCategories: [],
     searchLocations: [],
     buttonLinks: [],
@@ -126,24 +126,46 @@ const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
 
           <div>
             <label className="block text-sm font-medium mb-1">
-              Background Image
+              Background Images
             </label>
-            {formData.backgroundImage && (
-              <div className="mb-2">
-                <img
-                  src={
-                    formData.backgroundImage.includes("http")
-                      ? formData.backgroundImage
-                      : `${frontendUrl}/${formData.backgroundImage}`
-                  }
-                  alt="Logo"
-                  className="w-20 h-10 object-contain"
-                />
-              </div>
-            )}
+            <div className="flex flex-wrap gap-2 mb-2">
+              {Array.isArray(formData.backgroundImage) &&
+                formData.backgroundImage.map((img, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={img.includes("http") ? img : `${frontendUrl}/${img}`}
+                      alt={`Banner ${index + 1}`}
+                      className="w-32 h-20 object-cover rounded border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newImages = formData.backgroundImage.filter(
+                          (_, i) => i !== index,
+                        );
+                        setFormData({
+                          ...formData,
+                          backgroundImage: newImages,
+                        });
+                      }}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+            </div>
             <ImageUploader
               onUploadSuccess={(urls) =>
-                setFormData({ ...formData, backgroundImage: urls[0] })
+                setFormData({
+                  ...formData,
+                  backgroundImage: [
+                    ...(Array.isArray(formData.backgroundImage)
+                      ? formData.backgroundImage
+                      : []),
+                    ...urls,
+                  ],
+                })
               }
             />
           </div>
@@ -204,7 +226,7 @@ const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
           </div>
 
           {/* Search Locations */}
-          {/* <div>
+          <div>
             <label className="block text-sm font-medium mb-2">
               Search Locations
             </label>
@@ -256,7 +278,7 @@ const HomeHeroModal = ({ isOpen, onClose, onSave }) => {
             >
               Add Location
             </button>
-          </div> */}
+          </div>
 
           {/* Button Links */}
           <div>
